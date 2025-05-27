@@ -22,7 +22,46 @@ A modern mobile application built using **Flutter** that helps users find hostel
 
 This project follows **Clean Architecture** with the following layers:
 
-<pre lang="plaintext"> lib/ ├── core/ # Shared logic (constants, helpers, services) │ ├── features/ # Feature-specific modules │ ├── auth/ # Authentication (login/register) │ │ ├── data/ # Data sources, models, repository impl. │ │ ├── domain/ # Entities, use cases, abstract repositories │ │ └── presentation/ # UI (screens, widgets, providers) │ │ │ ├── hostel/ # Hostel listing, booking, etc. │ │ ├── data/ │ │ ├── domain/ │ │ └── presentation/ │ │ │ └── payment/ # Payment flow integration │ ├── data/ │ ├── domain/ │ └── presentation/ │ ├── shared/ # Common widgets, themes, routing, utils │ ├── themes/ │ ├── widgets/ │ ├── router/ │ └── utils/ │ ├── injection.dart # Dependency injection setup (GetIt + Injectable) └── main.dart # App entry point </pre>
+# Project Structure
+lib/
+├── core/ # Shared app logic (constants, utils, services)
+│ ├── constants/ # App-wide strings, enums, numbers
+│ ├── utils/ # Helpers (validators, date formatters)
+│ └── services/ # Network, local storage, DI
+│
+├── features/ # Feature modules (Clean Architecture layers)
+│ ├── auth/ # Authentication
+│ │ ├── data/ # Data sources (Firebase, local DB)
+│ │ │ ├── datasources/
+│ │ │ ├── models/
+│ │ │ └── repositories/
+│ │ ├── domain/ # Business logic
+│ │ │ ├── entities/
+│ │ │ ├── repositories/
+│ │ │ └── usecases/
+│ │ └── presentation/ # UI
+│ │ ├── screens/
+│ │ ├── widgets/
+│ │ └── providers/
+│ │
+│ ├── hostel/ # Hostel management
+│ │ ├── data/ # (Same structure as auth)
+│ │ ├── domain/
+│ │ └── presentation/
+│ │
+│ └── payment/ # Payments (bKash/Nagad)
+│ ├── data/
+│ ├── domain/
+│ └── presentation/
+│
+├── shared/ # Reusable components
+│ ├── themes/ # AppTheme, colors, text styles
+│ ├── widgets/ # Buttons, dialogs, loaders
+│ ├── router/ # AppRoutes, route guards
+│ └── utils/ # Global helpers (snackbars, etc.)
+│
+├── injection.dart # Dependency injection (GetIt + Injectable)
+└── main.dart # App entry point
 
 
 ---
