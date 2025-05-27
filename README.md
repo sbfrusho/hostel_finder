@@ -23,7 +23,7 @@ A modern mobile application built using **Flutter** that helps users find hostel
 This project follows **Clean Architecture** with the following layers:
 
 # Project Structure
-![Folder Structure](https://raw.githubusercontent.com/<your-username>/<repo-name>/main/assets/folder%20struc.png)
+![Folder Structure](imgs/folder%20struc.png)
 
 
 lib/
