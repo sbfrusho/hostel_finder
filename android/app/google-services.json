@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "942865403049",
+    "project_id": "hostelfinder-5a2d5",
+    "storage_bucket": "hostelfinder-5a2d5.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:942865403049:android:34448530a1efdbcfa1adb8",
+        "android_client_info": {
+          "package_name": "com.example.hostel_finder"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBQq0mbBodOyNrgfwFKmtHi9QHiT9t7gno"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
