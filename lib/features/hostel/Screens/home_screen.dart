@@ -1,7 +1,16 @@
 import 'package:flutter/material.dart';
+import 'hostel_detail_page.dart';
+import 'log_in_screen.dart';
 
-class HomeScreen extends StatelessWidget {
+class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
+
+  @override
+  State<HomeScreen> createState() => _HomeScreenState();
+}
+
+class _HomeScreenState extends State<HomeScreen> {
+  int _selectedIndex = 0;
 
   @override
   Widget build(BuildContext context) {
@@ -30,8 +39,8 @@ class HomeScreen extends StatelessWidget {
                       prefixIcon: const Icon(Icons.search),
                       filled: true,
                       fillColor: Colors.grey[100],
-                      contentPadding: const EdgeInsets.symmetric(
-                          vertical: 12, horizontal: 16),
+                      contentPadding:
+                      const EdgeInsets.symmetric(vertical: 12, horizontal: 16),
                       border: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(12),
                         borderSide: BorderSide.none,
@@ -63,62 +72,81 @@ class HomeScreen extends StatelessWidget {
           // Hostel list
           Expanded(
             child: ListView.builder(
-              itemCount: 4, // TODO: replace with dynamic count
+              itemCount: 4,
               itemBuilder: (context, index) {
                 return Padding(
-                  padding:
-                  const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-                  child: Card(
-                    shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(12)),
-                    elevation: 4,
-                    child: Row(
-                      children: [
-                        // Hostel image
-                        ClipRRect(
-                          borderRadius: const BorderRadius.only(
-                              topLeft: Radius.circular(12),
-                              bottomLeft: Radius.circular(12)),
-                          child: Image.asset(
-                            'assets/images/hostel${index + 1}.jpg',
-                            width: 100,
-                            height: 100,
-                            fit: BoxFit.cover,
+                  padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                  child: GestureDetector(
+                    onTap: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (_) => HostelDetailPage(
+                            imageUrls: [
+                              'assets/images/hostel1.jpg',
+                              'assets/images/hostel1.jpg',
+                            ],
+                            price: '\$400',
+                            roomType: 'Single - Master Bed',
+                            description:
+                            'Spacious and comfortable room near city center with natural light and private bath.',
+                            roomScore: 8.4,
+                            cleanlinessStars: 3,
                           ),
                         ),
-                        const SizedBox(width: 12),
-                        // Details
-                        Expanded(
-                          child: Padding(
-                            padding: const EdgeInsets.symmetric(vertical: 12),
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: const [
-                                Text(
-                                  'Modern Hostel',
-                                  style: TextStyle(
-                                    fontSize: 16,
-                                    fontWeight: FontWeight.bold,
-                                  ),
-                                ),
-                                SizedBox(height: 4),
-                                Text(
-                                  'Near city center',
-                                  style: TextStyle(fontSize: 14),
-                                ),
-                              ],
+                      );
+                    },
+                    child: Card(
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(12),
+                      ),
+                      elevation: 4,
+                      child: Row(
+                        children: [
+                          ClipRRect(
+                            borderRadius: const BorderRadius.only(
+                                topLeft: Radius.circular(12),
+                                bottomLeft: Radius.circular(12)),
+                            child: Image.asset(
+                              'assets/images/hostel${index + 1}.jpg',
+                              width: 100,
+                              height: 100,
+                              fit: BoxFit.cover,
                             ),
                           ),
-                        ),
-                        const SizedBox(width: 8),
-                        IconButton(
-                          icon: const Icon(Icons.map_outlined),
-                          color: Theme.of(context).primaryColor,
-                          onPressed: () {
-                            // TODO: open map view
-                          },
-                        ),
-                      ],
+                          const SizedBox(width: 12),
+                          Expanded(
+                            child: Padding(
+                              padding: const EdgeInsets.symmetric(vertical: 12),
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: const [
+                                  Text(
+                                    'Modern Hostel',
+                                    style: TextStyle(
+                                      fontSize: 16,
+                                      fontWeight: FontWeight.bold,
+                                    ),
+                                  ),
+                                  SizedBox(height: 4),
+                                  Text(
+                                    'Near city center',
+                                    style: TextStyle(fontSize: 14),
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ),
+                          const SizedBox(width: 8),
+                          IconButton(
+                            icon: const Icon(Icons.map_outlined),
+                            color: Theme.of(context).primaryColor,
+                            onPressed: () {
+                              // TODO: open map view
+                            },
+                          ),
+                        ],
+                      ),
                     ),
                   ),
                 );
@@ -130,7 +158,33 @@ class HomeScreen extends StatelessWidget {
 
       // Bottom navigation bar
       bottomNavigationBar: BottomNavigationBar(
-        currentIndex: 0, // Home
+        currentIndex: _selectedIndex,
+        onTap: (index) {
+          setState(() {
+            _selectedIndex = index;
+          });
+
+          switch (index) {
+            case 0:
+              Navigator.pushReplacement(
+                context,
+                MaterialPageRoute(builder: (context) => const HomeScreen()),
+              );
+              break;
+            case 1:
+            // TODO: Navigate to bookmarks page
+              break;
+            case 2:
+            // TODO: Navigate to add hostel page
+              break;
+            case 3:
+              Navigator.pushReplacement(
+                context,
+                MaterialPageRoute(builder: (context) => const LoginScreen()),
+              );
+              break;
+          }
+        },
         selectedItemColor: Theme.of(context).primaryColor,
         unselectedItemColor: Colors.grey,
         showUnselectedLabels: false,
