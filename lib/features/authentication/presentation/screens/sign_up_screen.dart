@@ -1,8 +1,10 @@
+import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
-import 'package:go_router/go_router.dart';
+import 'package:hostel_finder/core/constants/app_colors.dart';
+import 'package:hostel_finder/core/constants/app_strings.dart';
 import 'package:provider/provider.dart';
-
-import '../../../../core/constants/app_strings.dart';
+import 'package:go_router/go_router.dart';
+import '../../../../shared/widgets/custom_text_field.dart';
 import '../providers/auth_provider.dart';
 
 class SignUpScreen extends StatefulWidget {
@@ -21,95 +23,153 @@ class _SignUpScreenState extends State<SignUpScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final auth = Provider.of<AuthProvider>(context, listen: false);
+    final authProvider = Provider.of<AuthProvider>(context, listen: false);
+    final imageHeight = MediaQuery.of(context).size.height * 0.3;
 
     return Scaffold(
-      appBar: AppBar(title: const Text(AppStrings.signUp)),
-      body: SingleChildScrollView(
-        child: Padding(
-          padding: const EdgeInsets.all(16),
-          child: Form(
-            key: _formKey,
-            child: Column(
-              children: [
-                TextFormField(
-                  controller: emailController,
-                  decoration: const InputDecoration(labelText: AppStrings.email),
-                  validator: (value) =>
-                  value!.isEmpty ? AppStrings.emailRequired :
-                  !value.contains('@') ? AppStrings.invalidEmail : null,
-                  keyboardType: TextInputType.emailAddress,
-                ),
-                const SizedBox(height: 16),
-                TextFormField(
-                  controller: passwordController,
-                  decoration: const InputDecoration(labelText: AppStrings.password),
-                  obscureText: true,
-                  validator: (value) =>
-                  value!.isEmpty ? AppStrings.passwordRequired :
-                  value.length < 6 ? AppStrings.passwordTooShort : null,
-                ),
-                const SizedBox(height: 16),
-                TextFormField(
-                  controller: confirmPasswordController,
-                  decoration: const InputDecoration(
-                    labelText: AppStrings.confirmPassword,
-                  ),
-                  obscureText: true,
-                  validator: (value) =>
-                  value != passwordController.text
-                      ? AppStrings.passwordsDontMatch
-                      : null,
-                ),
-                const SizedBox(height: 24),
-                SizedBox(
-                  width: double.infinity,
-                  child: ElevatedButton(
-                    onPressed: loading ? null : () async {
-                      if (_formKey.currentState!.validate()) {
-                        setState(() => loading = true);
-                        try {
-                          await auth.signUp(
-                            emailController.text,
-                            passwordController.text,
-                          );
-                          if (mounted) {
-                            ScaffoldMessenger.of(context).showSnackBar(
-                              const SnackBar(
-                                content: Text(AppStrings.registerSuccess),
-                              ),
-                            );
-                            context.go('/home');
-                          }
-                        } catch (e) {
-                          if (mounted) {
-                            ScaffoldMessenger.of(context).showSnackBar(
-                              SnackBar(content: Text(e.toString())),
-                            );
-                          }
-                        }
-                        setState(() => loading = false);
-                      }
-                    },
-                    child: loading
-                        ? const CircularProgressIndicator()
-                        : const Text(AppStrings.signUp),
-                  ),
-                ),
-                const SizedBox(height: 16),
-                TextButton(
-                  onPressed: () => context.pop(),
-                  child: Text(
-                    AppStrings.alreadyHaveAccount + AppStrings.signIn,
-                    style: TextStyle(
-                      color: Theme.of(context).primaryColor,
-                    ),
-                  ),
-                ),
-              ],
-            ),
+      extendBodyBehindAppBar: true, // Allows app bar to overlap image
+      appBar: AppBar(
+        backgroundColor: Colors.transparent, // Transparent app bar
+        elevation: 0, // Remove shadow
+        title: Text(
+          AppStrings.signUp,
+          style: TextStyle(
+            color: Colors.white, // White text for contrast
+            fontWeight: FontWeight.bold,
           ),
         ),
+        iconTheme: IconThemeData(color: Colors.white), // White back button
+      ),
+      body: Column(
+        children: [
+          // Image section (covers top part including behind app bar)
+          SizedBox(
+            height: imageHeight,
+            width: double.infinity,
+            child: Image.asset(
+              'imgs/home_image.png',
+              fit: BoxFit.cover,
+            ),
+          ),
+          
+          // White background form section
+          Expanded(
+            child: Container(
+              color: Colors.white,
+              child: SingleChildScrollView(
+                padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 16),
+                child: Form(
+                  key: _formKey,
+                  child: Column(
+                    children: [
+                      const SizedBox(height: 16),
+                      Text(
+                        AppStrings.register,
+                        style: TextStyle(
+                          fontSize: 32,
+                          fontWeight: FontWeight.bold,
+                          color: AppColors.primaryColor,
+                        ),
+                      ),
+                      const SizedBox(height: 24),
+                      CustomTextField(
+                        hintText: AppStrings.email,
+                        prefixIcon: Icons.person,
+                        controller: emailController,
+                        validator: (val) => val == null || val.isEmpty
+                            ? AppStrings.hintEmail
+                            : null,
+                      ),
+                      const SizedBox(height: 16),
+                      CustomTextField(
+                        hintText: AppStrings.password,
+                        prefixIcon: Icons.lock_outlined,
+                        controller: passwordController,
+                        obscureText: true,
+                        validator: (val) => val != null && val.length >= 6
+                            ? null
+                            : AppStrings.passwordTooShort,
+                      ),
+                      const SizedBox(height: 16),
+                      CustomTextField(
+                        hintText: AppStrings.confirmPassword,
+                        prefixIcon: Icons.lock_outlined,
+                        controller: confirmPasswordController,
+                        obscureText: true,
+                        validator: (val) {
+                          if (val == null || val.isEmpty) {
+                            return AppStrings.confirmYourPassword;
+                          } else if (val != passwordController.text) {
+                            return AppStrings.passwrodDoNotMatch;
+                          }
+                          return null;
+                        },
+                      ),
+                      const SizedBox(height: 24),
+                      SizedBox(
+                        width: double.infinity,
+                        height: 52,
+                        child: ElevatedButton(
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: AppColors.primaryColor,
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(12),
+                            ),
+                          ),
+                          onPressed: loading ? null : () async {
+                            if (_formKey.currentState?.validate() ?? false) {
+                              setState(() => loading = true);
+                              try {
+                                await authProvider.signUp(
+                                  emailController.text.trim(),
+                                  passwordController.text,
+                                );
+                                context.go('/home');
+                              } catch (e) {
+                                ScaffoldMessenger.of(context).showSnackBar(
+                                  SnackBar(content: Text(e.toString())),
+                                );
+                              }
+                              setState(() => loading = false);
+                            }
+                          },
+                          child: loading
+                              ? const CircularProgressIndicator()
+                              : const Text(
+                                  'Register',
+                                  style: TextStyle(
+                                    fontSize: 18,
+                                    fontWeight: FontWeight.w600,
+                                    color: Colors.white,
+                                  ),
+                                ),
+                        ),
+                      ),
+                      const SizedBox(height: 16),
+                      RichText(
+                        text: TextSpan(
+                          text: AppStrings.alreadyHaveAccount,
+                          style: const TextStyle(color: Colors.black87),
+                          children: [
+                            TextSpan(
+                              text: AppStrings.signIn,
+                              style: TextStyle(
+                                color: AppColors.primaryColor,
+                                fontWeight: FontWeight.bold,
+                              ),
+                              recognizer: TapGestureRecognizer()
+                                ..onTap = () => context.go('/signin'),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+            ),
+          ),
+        ],
       ),
     );
   }
