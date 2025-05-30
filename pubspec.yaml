@@ -56,3 +56,8 @@ flutter:
 
   assets:
     - imgs/home_image.png
+    - assets/images/hostel1.jpg
+    - assets/images/hostel2.jpg
+    - assets/images/hostel3.jpg
+    - assets/images/hostel4.jpg
+    - assets/images/logo.png

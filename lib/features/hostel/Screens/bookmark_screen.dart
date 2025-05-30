@@ -1,17 +1,17 @@
 import 'package:flutter/material.dart';
 import 'hostel_detail_page.dart';
 import 'log_in_screen.dart';
+import 'home_screen.dart';
 import 'add_post_screen.dart';
-import 'bookmark_screen.dart';
 
-class HomeScreen extends StatefulWidget {
-  const HomeScreen({super.key});
+class BookmarkScreen extends StatefulWidget {
+  const BookmarkScreen({super.key});
 
   @override
-  State<HomeScreen> createState() => _HomeScreenState();
+  State<BookmarkScreen> createState() => _BookmarkScreenState();
 }
 
-class _HomeScreenState extends State<HomeScreen> {
+class _BookmarkScreenState extends State<BookmarkScreen> {
   int _selectedIndex = 0;
 
   @override
@@ -23,54 +23,12 @@ class _HomeScreenState extends State<HomeScreen> {
           children: const [
             Icon(Icons.search, color: Colors.white),
             SizedBox(width: 8),
-            Text('Hostel Finder'),
+            Text('Bookmarks'),
           ],
         ),
       ),
       body: Column(
         children: [
-          // Search & filter
-          Padding(
-            padding: const EdgeInsets.all(16.0),
-            child: Row(
-              children: [
-                Expanded(
-                  child: TextField(
-                    decoration: InputDecoration(
-                      hintText: 'Search hostels...',
-                      prefixIcon: const Icon(Icons.search),
-                      filled: true,
-                      fillColor: Colors.grey[100],
-                      contentPadding:
-                      const EdgeInsets.symmetric(vertical: 12, horizontal: 16),
-                      border: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(12),
-                        borderSide: BorderSide.none,
-                      ),
-                    ),
-                  ),
-                ),
-                const SizedBox(width: 12),
-                GestureDetector(
-                  onTap: () {
-                    // TODO: open filter screen
-                  },
-                  child: Container(
-                    padding: const EdgeInsets.all(12),
-                    decoration: BoxDecoration(
-                      color: Theme.of(context).primaryColor,
-                      borderRadius: BorderRadius.circular(12),
-                    ),
-                    child: const Icon(
-                      Icons.filter_list,
-                      color: Colors.white,
-                    ),
-                  ),
-                ),
-              ],
-            ),
-          ),
-
           // Hostel list
           Expanded(
             child: ListView.builder(
