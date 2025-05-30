@@ -15,6 +15,7 @@ class AppStrings {
   static const String retry = 'Retry';
   static const String noInternet = 'No internet connection';
   static const String unknownError = 'Something went wrong';
+  static const String register = 'Register';
 
   // Auth
   static const String signIn = 'Sign In';
@@ -27,6 +28,13 @@ class AppStrings {
   static const String alreadyHaveAccount = 'Already have an account? ';
   static const String loginSuccess = 'Logged in successfully';
   static const String registerSuccess = 'Account created successfully';
+  static const String confirmYourPassword = 'Confirm Your Password';
+  static const String passwrodDoNotMatch = 'Password does not match';
+
+
+
+  // hint
+  static const String hintEmail = 'Enter your email';
 
   // Validation Messages
   static const String emailRequired = 'Email is required';
@@ -94,4 +102,5 @@ class AppStrings {
   static const String hostelLoadError = 'Failed to load hostels';
   static const String bookingError = 'Failed to process booking';
   static const String paymentError = 'Payment processing failed';
+
 }
