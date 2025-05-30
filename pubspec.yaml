@@ -37,6 +37,7 @@ dependencies:
   # Image & Media
   camera: ^0.11.1
   flutter_image_compress: ^2.4.0
+  video_player: ^2.7.2
 
   # UI & UX
   auto_route: ^10.1.0
