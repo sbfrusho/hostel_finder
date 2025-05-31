@@ -1,7 +1,12 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
+import 'package:hostel_finder/core/constants/app_colors.dart';
+import 'package:hostel_finder/features/hostel/data/hostel_model.dart';
+
 
 class HostelDetailPage extends StatelessWidget {
-  final List<String> imageUrls;
+  final List<String> imagePaths; // Local file paths here
   final String price;
   final String roomType;
   final String description;
@@ -10,12 +15,12 @@ class HostelDetailPage extends StatelessWidget {
 
   const HostelDetailPage({
     super.key,
-    required this.imageUrls,
+    required this.imagePaths,
     required this.price,
     required this.roomType,
     required this.description,
-    required this.roomScore,
-    required this.cleanlinessStars,
+    this.roomScore = 5.0,
+    this.cleanlinessStars = 3,
   });
 
   Widget _buildStarRating(int stars) {
@@ -32,31 +37,47 @@ class HostelDetailPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final screenWidth = MediaQuery.of(context).size.width;
+    
+
     return Scaffold(
       appBar: AppBar(
-        title: const Text("Hostel Details"),
-        centerTitle: true,
+        backgroundColor: AppColors.primaryColor,
+        title: Row(
+          mainAxisSize: MainAxisSize.min,
+          children: const [
+            SizedBox(width: 8),
+            Text('Details',style: TextStyle(color: Colors.white),),
+          ],
+        ),
       ),
       body: SingleChildScrollView(
         padding: const EdgeInsets.all(16),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            // Image carousel
             SizedBox(
-              height: 160,
+              height: screenWidth * 0.5,
               child: ListView.separated(
                 scrollDirection: Axis.horizontal,
-                itemCount: imageUrls.length,
+                itemCount: imagePaths.length,
                 separatorBuilder: (_, __) => const SizedBox(width: 8),
                 itemBuilder: (context, index) {
                   return ClipRRect(
                     borderRadius: BorderRadius.circular(12),
-                    child: Image.network(
-                      imageUrls[index],
-                      width: 200,
-                      height: 160,
+                    child: Image.file(
+                      File(imagePaths[index]),
+                      width: screenWidth * 0.7,
+                      height: screenWidth * 0.5,
                       fit: BoxFit.cover,
+                      errorBuilder: (context, error, stackTrace) {
+                        return Container(
+                          width: screenWidth * 0.7,
+                          height: screenWidth * 0.5,
+                          color: Colors.grey[300],
+                          child: const Icon(Icons.broken_image, size: 50),
+                        );
+                      },
                     ),
                   );
                 },
@@ -70,26 +91,40 @@ class HostelDetailPage extends StatelessWidget {
               children: [
                 Text(
                   '$price/month\n$roomType',
-                  style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                  style: const TextStyle(
+                    fontSize: 18,
+                    fontWeight: FontWeight.bold,
+                    color: AppColors.primaryColor,
+                  ),
                 ),
                 Column(
                   crossAxisAlignment: CrossAxisAlignment.end,
                   children: [
                     const Text(
                       "Room Score",
-                      style: TextStyle(fontWeight: FontWeight.w600),
+                      style: TextStyle(
+                        fontWeight: FontWeight.w600,
+                        color: AppColors.primaryColor,
+                      ),
                     ),
                     Row(
                       children: [
-                        const Icon(Icons.home, size: 20),
+                        const Icon(Icons.home, size: 20, color: AppColors.primaryColor),
                         const SizedBox(width: 4),
-                        Text(roomScore.toStringAsFixed(1)),
+                        Text(
+                          
+                          roomScore.toStringAsFixed(1),
+                          style: const TextStyle(color: AppColors.primaryColor),
+                        ),
                       ],
                     ),
                     const SizedBox(height: 4),
                     Row(
                       children: [
-                        const Text("Cleanliness"),
+                        const Text(
+                          "Cleanliness",
+                          style: TextStyle(color: AppColors.primaryColor),
+                        ),
                         const SizedBox(width: 4),
                         _buildStarRating(cleanlinessStars),
                       ],
@@ -103,10 +138,10 @@ class HostelDetailPage extends StatelessWidget {
             // Message button
             ElevatedButton.icon(
               onPressed: () {},
-              icon: const Icon(Icons.message),
-              label: const Text("Message"),
+              icon: const Icon(Icons.message , color: Colors.white,),
+              label: const Text("Message",style: TextStyle(color: Colors.white),),
               style: ElevatedButton.styleFrom(
-                backgroundColor: Colors.blue,
+                backgroundColor: AppColors.primaryColor,
                 minimumSize: const Size(double.infinity, 45),
               ),
             ),
@@ -116,41 +151,56 @@ class HostelDetailPage extends StatelessWidget {
             // Description
             const Text(
               "Description",
-              style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
+              style: TextStyle(
+                fontSize: 16,
+                fontWeight: FontWeight.w600,
+                color: AppColors.primaryColor,
+              ),
             ),
             const SizedBox(height: 6),
-            Text(description),
+            Text(
+              description,
+              style: const TextStyle(color: Colors.black87),
+            ),
 
             const SizedBox(height: 20),
 
-            // Feature cards
-            GridView.count(
-              crossAxisCount: 2,
-              shrinkWrap: true,
-              physics: const NeverScrollableScrollPhysics(),
-              crossAxisSpacing: 10,
-              mainAxisSpacing: 10,
-              childAspectRatio: 3,
+            // Feature cards (responsive with Wrap)
+            Wrap(
+              spacing: 10,
+              runSpacing: 10,
               children: const [
-                _FeatureCard(
-                  icon: Icons.bolt,
-                  title: "AI-Powered Recommendation",
-                  description: "Suggests hostels/rooms",
+                SizedBox(
+                  width: double.infinity,
+                  child: _FeatureCard(
+                    icon: Icons.bolt,
+                    title: "AI-Powered Recommendation",
+                    description: "Suggests hostels/rooms",
+                  ),
                 ),
-                _FeatureCard(
-                  icon: Icons.star,
-                  title: "Room Quality Scoring",
-                  description: "Rates cleanliness and condition",
+                SizedBox(
+                  width: double.infinity,
+                  child: _FeatureCard(
+                    icon: Icons.star,
+                    title: "Room Quality Scoring",
+                    description: "Rates cleanliness and condition",
+                  ),
                 ),
-                _FeatureCard(
-                  icon: Icons.analytics,
-                  title: "Demand Forecast for Students",
-                  description: "Predicts suspicious listings",
+                SizedBox(
+                  width: double.infinity,
+                  child: _FeatureCard(
+                    icon: Icons.analytics,
+                    title: "Demand Forecast for Students",
+                    description: "Predicts suspicious listings",
+                  ),
                 ),
-                _FeatureCard(
-                  icon: Icons.attach_money,
-                  title: "Smart Price Estimator",
-                  description: "Suggests fair rent price",
+                SizedBox(
+                  width: double.infinity,
+                  child: _FeatureCard(
+                    icon: Icons.attach_money,
+                    title: "Smart Price Estimator",
+                    description: "Suggests fair rent price",
+                  ),
                 ),
               ],
             ),
@@ -160,9 +210,9 @@ class HostelDetailPage extends StatelessWidget {
             // Book Now button
             ElevatedButton(
               onPressed: () {},
-              child: const Text("Book Now"),
+              child: const Text("Book Now", style: TextStyle(color: Colors.white),),
               style: ElevatedButton.styleFrom(
-                backgroundColor: Colors.blue,
+                backgroundColor: AppColors.primaryColor,
                 minimumSize: const Size(double.infinity, 48),
               ),
             ),
@@ -193,7 +243,7 @@ class _FeatureCard extends StatelessWidget {
         padding: const EdgeInsets.all(8),
         child: Row(
           children: [
-            Icon(icon, size: 28, color: Colors.teal),
+            Icon(icon, size: 28, color: AppColors.primaryColor),
             const SizedBox(width: 8),
             Expanded(
               child: Column(
@@ -201,8 +251,10 @@ class _FeatureCard extends StatelessWidget {
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   Text(title,
-                      style:
-                      const TextStyle(fontSize: 13, fontWeight: FontWeight.bold)),
+                      style: const TextStyle(
+                          fontSize: 13,
+                          fontWeight: FontWeight.bold,
+                          color: AppColors.primaryColor)),
                   Text(
                     description,
                     style: const TextStyle(fontSize: 11),

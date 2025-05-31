@@ -2,6 +2,8 @@ import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:hostel_finder/core/constants/app_colors.dart';
 import 'package:hostel_finder/core/constants/app_strings.dart';
+import 'package:hostel_finder/features/authentication/presentation/screens/sign_up_screen.dart';
+import 'package:hostel_finder/features/hostel/Screens/home_screen.dart';
 import 'package:hostel_finder/shared/widgets/custom_text_field.dart';
 import 'package:provider/provider.dart';
 import '../providers/auth_provider.dart';
@@ -33,19 +35,18 @@ class _SignInScreenState extends State<SignInScreen> {
           SizedBox(
             height: imageHeight,
             width: double.infinity,
-            child: Image.asset(
-              'imgs/home_image.png',
-              fit: BoxFit.cover,
-            ),
+            child: Image.asset('imgs/home_image.png', fit: BoxFit.cover),
           ),
-          
+
           // White background form section
           Expanded(
-            
             child: Container(
               color: Colors.white,
               child: SingleChildScrollView(
-                padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 16),
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 24,
+                  vertical: 16,
+                ),
                 child: Form(
                   key: _formKey,
                   child: Column(
@@ -78,8 +79,8 @@ class _SignInScreenState extends State<SignInScreen> {
                             return AppStrings.passwordTooShort;
                           }
                           return null;
-                        }, 
-                        hintText: AppStrings.password, 
+                        },
+                        hintText: AppStrings.password,
                         prefixIcon: Icons.lock,
                       ),
                       const SizedBox(height: 24),
@@ -97,10 +98,21 @@ class _SignInScreenState extends State<SignInScreen> {
                                         emailController.text,
                                         passwordController.text,
                                       );
-                                      if (mounted) context.go('/home');
+                                      if (mounted) {
+                                        Navigator.pushReplacement(
+                                          context,
+                                          MaterialPageRoute(
+                                            builder: (context) =>
+                                                const HomeScreen(),
+                                          ),
+                                        );
+                                      }
+                                      ;
                                     } catch (e) {
                                       if (mounted) {
-                                        ScaffoldMessenger.of(context).showSnackBar(
+                                        ScaffoldMessenger.of(
+                                          context,
+                                        ).showSnackBar(
                                           SnackBar(content: Text(e.toString())),
                                         );
                                       }
@@ -109,13 +121,20 @@ class _SignInScreenState extends State<SignInScreen> {
                                   }
                                 },
                           style: ElevatedButton.styleFrom(
-                            backgroundColor: const Color.fromARGB(255, 5, 90, 49),
+                            backgroundColor: const Color.fromARGB(
+                              255,
+                              5,
+                              90,
+                              49,
+                            ),
                             shape: RoundedRectangleBorder(
                               borderRadius: BorderRadius.circular(12),
                             ),
                           ),
                           child: loading
-                              ? const CircularProgressIndicator(color: Colors.white)
+                              ? const CircularProgressIndicator(
+                                  color: Colors.white,
+                                )
                               : const Text(
                                   AppStrings.signIn,
                                   style: TextStyle(
@@ -130,7 +149,10 @@ class _SignInScreenState extends State<SignInScreen> {
                       RichText(
                         text: TextSpan(
                           text: "${AppStrings.dontHaveAccount} ",
-                          style: const TextStyle(color: Colors.black87, fontSize: 14),
+                          style: const TextStyle(
+                            color: Colors.black87,
+                            fontSize: 14,
+                          ),
                           children: [
                             TextSpan(
                               text: AppStrings.signUp,
@@ -139,7 +161,12 @@ class _SignInScreenState extends State<SignInScreen> {
                                 fontWeight: FontWeight.bold,
                               ),
                               recognizer: TapGestureRecognizer()
-                                ..onTap = () => context.push('/signup'),
+                                ..onTap = () => Navigator.pushReplacement(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (context) => const SignUpScreen(),
+                                  ),
+                                ),
                             ),
                           ],
                         ),

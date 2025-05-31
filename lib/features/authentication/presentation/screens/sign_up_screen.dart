@@ -2,6 +2,7 @@ import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:hostel_finder/core/constants/app_colors.dart';
 import 'package:hostel_finder/core/constants/app_strings.dart';
+import 'package:hostel_finder/features/authentication/presentation/screens/sign_in_screen.dart';
 import 'package:provider/provider.dart';
 import 'package:go_router/go_router.dart';
 import '../../../../shared/widgets/custom_text_field.dart';
@@ -46,18 +47,18 @@ class _SignUpScreenState extends State<SignUpScreen> {
           SizedBox(
             height: imageHeight,
             width: double.infinity,
-            child: Image.asset(
-              'imgs/home_image.png',
-              fit: BoxFit.cover,
-            ),
+            child: Image.asset('imgs/home_image.png', fit: BoxFit.cover),
           ),
-          
+
           // White background form section
           Expanded(
             child: Container(
               color: Colors.white,
               child: SingleChildScrollView(
-                padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 16),
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 24,
+                  vertical: 16,
+                ),
                 child: Form(
                   key: _formKey,
                   child: Column(
@@ -116,23 +117,34 @@ class _SignUpScreenState extends State<SignUpScreen> {
                               borderRadius: BorderRadius.circular(12),
                             ),
                           ),
-                          onPressed: loading ? null : () async {
-                            if (_formKey.currentState?.validate() ?? false) {
-                              setState(() => loading = true);
-                              try {
-                                await authProvider.signUp(
-                                  emailController.text.trim(),
-                                  passwordController.text,
-                                );
-                                context.go('/home');
-                              } catch (e) {
-                                ScaffoldMessenger.of(context).showSnackBar(
-                                  SnackBar(content: Text(e.toString())),
-                                );
-                              }
-                              setState(() => loading = false);
-                            }
-                          },
+                          onPressed: loading
+                              ? null
+                              : () async {
+                                  if (_formKey.currentState?.validate() ??
+                                      false) {
+                                    setState(() => loading = true);
+                                    try {
+                                      await authProvider.signUp(
+                                        emailController.text.trim(),
+                                        passwordController.text,
+                                      );
+                                      Navigator.pushReplacement(
+                                        context,
+                                        MaterialPageRoute(
+                                          builder: (context) =>
+                                              const SignInScreen(),
+                                        ),
+                                      );
+                                    } catch (e) {
+                                      ScaffoldMessenger.of(
+                                        context,
+                                      ).showSnackBar(
+                                        SnackBar(content: Text(e.toString())),
+                                      );
+                                    }
+                                    setState(() => loading = false);
+                                  }
+                                },
                           child: loading
                               ? const CircularProgressIndicator()
                               : const Text(
@@ -158,7 +170,12 @@ class _SignUpScreenState extends State<SignUpScreen> {
                                 fontWeight: FontWeight.bold,
                               ),
                               recognizer: TapGestureRecognizer()
-                                ..onTap = () => context.go('/signin'),
+                                ..onTap = () => Navigator.pushReplacement(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (context) => const SignInScreen(),
+                                  ),
+                                ),
                             ),
                           ],
                         ),

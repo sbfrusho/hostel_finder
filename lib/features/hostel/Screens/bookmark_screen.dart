@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
-import 'hostel_detail_page.dart';
+import 'package:hostel_finder/core/constants/app_colors.dart';
+import 'package:hostel_finder/features/authentication/presentation/screens/sign_in_screen.dart';
+import 'package:hostel_finder/features/hostel/data/hostel_model.dart';
+import 'hostel_detail_page.dart' hide AppColors;
 import 'log_in_screen.dart';
 import 'home_screen.dart';
 import 'add_post_screen.dart';
@@ -12,24 +15,65 @@ class BookmarkScreen extends StatefulWidget {
 }
 
 class _BookmarkScreenState extends State<BookmarkScreen> {
-  int _selectedIndex = 0;
+  int _selectedIndex = 1;
+  List<HostelModel> hostels = [];
+
+    void _onNavItemTapped(int index) async {
+    setState(() {
+      _selectedIndex = index;
+    });
+
+    switch (index) {
+      case 0:
+      Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(builder: (_) => const HomeScreen()),
+        );
+        break;
+      case 1:
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(builder: (_) => const BookmarkScreen()),
+        );
+        break;
+      case 2:
+        final newHostel = await Navigator.push<HostelModel>(
+          context,
+          MaterialPageRoute(builder: (_) => const AddPostScreen()),
+        );
+
+        if (newHostel != null) {
+          setState(() {
+            hostels.add(newHostel);
+            _selectedIndex = 0;
+          });
+        }
+        break;
+      case 3:
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(builder: (_) => const SignInScreen()),
+        );
+        break;
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
+        backgroundColor: AppColors.primaryColor,
         title: Row(
           mainAxisSize: MainAxisSize.min,
           children: const [
             Icon(Icons.search, color: Colors.white),
             SizedBox(width: 8),
-            Text('Bookmarks'),
+            Text('Bookmarks',style: TextStyle(color: Colors.white),),
           ],
         ),
       ),
       body: Column(
         children: [
-          // Hostel list
           Expanded(
             child: ListView.builder(
               itemCount: 4,
@@ -42,14 +86,14 @@ class _BookmarkScreenState extends State<BookmarkScreen> {
                         context,
                         MaterialPageRoute(
                           builder: (_) => HostelDetailPage(
-                            imageUrls: [
+                            imagePaths: [
                               'assets/images/hostel1.jpg',
                               'assets/images/hostel1.jpg',
                             ],
                             price: '\$400',
                             roomType: 'Single - Master Bed',
                             description:
-                            'Spacious and comfortable room near city center with natural light and private bath.',
+                                'Spacious and comfortable room near city center with natural light and private bath.',
                             roomScore: 8.4,
                             cleanlinessStars: 3,
                           ),
@@ -65,8 +109,9 @@ class _BookmarkScreenState extends State<BookmarkScreen> {
                         children: [
                           ClipRRect(
                             borderRadius: const BorderRadius.only(
-                                topLeft: Radius.circular(12),
-                                bottomLeft: Radius.circular(12)),
+                              topLeft: Radius.circular(12),
+                              bottomLeft: Radius.circular(12),
+                            ),
                             child: Image.asset(
                               'assets/images/hostel${index + 1}.jpg',
                               width: 100,
@@ -100,7 +145,7 @@ class _BookmarkScreenState extends State<BookmarkScreen> {
                           const SizedBox(width: 8),
                           IconButton(
                             icon: const Icon(Icons.map_outlined),
-                            color: Theme.of(context).primaryColor,
+                            color: AppColors.primaryColor,
                             onPressed: () {
                               // TODO: open map view
                             },
@@ -115,45 +160,14 @@ class _BookmarkScreenState extends State<BookmarkScreen> {
           ),
         ],
       ),
-
-      // Bottom navigation bar
       bottomNavigationBar: BottomNavigationBar(
         currentIndex: _selectedIndex,
-        onTap: (index) {
-          setState(() {
-            _selectedIndex = index;
-          });
-
-          switch (index) {
-            case 0:
-              Navigator.pushReplacement(
-                context,
-                MaterialPageRoute(builder: (context) => const HomeScreen()),
-              );
-              break;
-            case 1:
-              Navigator.pushReplacement(
-                context,
-                MaterialPageRoute(builder: (context) => const BookmarkScreen()),
-              );
-              break;
-            case 2:
-              Navigator.pushReplacement(
-                context,
-                MaterialPageRoute(builder: (context) => const AddPostScreen()),
-              );
-              break;
-            case 3:
-              Navigator.pushReplacement(
-                context,
-                MaterialPageRoute(builder: (context) => const LoginScreen()),
-              );
-              break;
-          }
-        },
-        selectedItemColor: Theme.of(context).primaryColor,
-        unselectedItemColor: Colors.grey,
-        showUnselectedLabels: false,
+        onTap: _onNavItemTapped,
+        backgroundColor: AppColors.primaryColor,
+        selectedItemColor: Colors.white,
+        unselectedItemColor: Colors.white70,
+        showUnselectedLabels: true,
+        type: BottomNavigationBarType.fixed,
         items: const [
           BottomNavigationBarItem(
             icon: Icon(Icons.home_filled),
