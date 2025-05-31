@@ -1,16 +1,14 @@
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
-import '../providers/auth_provider.dart';
-import 'package:go_router/go_router.dart';
+import 'home_screen.dart';
 
-class SplashScreen2 extends StatefulWidget {
-  const SplashScreen2({super.key});
+class SplashScreen extends StatefulWidget {
+  const SplashScreen({super.key});
 
   @override
-  State<SplashScreen2> createState() => _SplashScreen2State();
+  State<SplashScreen> createState() => _SplashScreenState();
 }
 
-class _SplashScreen2State extends State<SplashScreen2>
+class _SplashScreenState extends State<SplashScreen>
     with SingleTickerProviderStateMixin {
   late final AnimationController _controller;
   late final Animation<double> _opacityAnim;
@@ -18,31 +16,19 @@ class _SplashScreen2State extends State<SplashScreen2>
   @override
   void initState() {
     super.initState();
-
     _controller = AnimationController(
       vsync: this,
       duration: const Duration(milliseconds: 800),
     );
-
     _opacityAnim = CurvedAnimation(
       parent: _controller,
       curve: Curves.easeIn,
     );
-
     _controller.forward();
-
-    // Delay for splash + animation, then check auth and navigate
     Future.delayed(const Duration(seconds: 3), () {
-      final auth = Provider.of<AuthProvider>(context, listen: false);
-
-      // Use WidgetsBinding to ensure navigation after frame build
-      WidgetsBinding.instance.addPostFrameCallback((_) {
-        if (auth.user != null) {
-          context.go('/home');
-        } else {
-          context.go('/signin');
-        }
-      });
+      Navigator.of(context).pushReplacement(
+        MaterialPageRoute(builder: (_) => const HomeScreen()),
+      );
     });
   }
 
