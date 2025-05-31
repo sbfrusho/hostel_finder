@@ -103,4 +103,6 @@ class AppStrings {
   static const String bookingError = 'Failed to process booking';
   static const String paymentError = 'Payment processing failed';
 
+  // Firebase
+  static const String hostelPostCollection = 'hostel_posts';
 }
