@@ -1,12 +1,10 @@
 import 'dart:io';
-
 import 'package:flutter/material.dart';
+import 'dart:math';
 import 'package:hostel_finder/core/constants/app_colors.dart';
-import 'package:hostel_finder/features/hostel/data/hostel_model.dart';
-
 
 class HostelDetailPage extends StatelessWidget {
-  final List<String> imagePaths; // Local file paths here
+  final List<String> imagePaths;
   final String price;
   final String roomType;
   final String description;
@@ -19,8 +17,8 @@ class HostelDetailPage extends StatelessWidget {
     required this.price,
     required this.roomType,
     required this.description,
-    this.roomScore = 5.0,
-    this.cleanlinessStars = 3,
+    required this.roomScore,
+    required this.cleanlinessStars,
   });
 
   Widget _buildStarRating(int stars) {
@@ -38,7 +36,6 @@ class HostelDetailPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final screenWidth = MediaQuery.of(context).size.width;
-    
 
     return Scaffold(
       appBar: AppBar(
@@ -47,7 +44,7 @@ class HostelDetailPage extends StatelessWidget {
           mainAxisSize: MainAxisSize.min,
           children: const [
             SizedBox(width: 8),
-            Text('Details',style: TextStyle(color: Colors.white),),
+            Text('Details', style: TextStyle(color: Colors.white)),
           ],
         ),
       ),
@@ -112,7 +109,6 @@ class HostelDetailPage extends StatelessWidget {
                         const Icon(Icons.home, size: 20, color: AppColors.primaryColor),
                         const SizedBox(width: 4),
                         Text(
-                          
                           roomScore.toStringAsFixed(1),
                           style: const TextStyle(color: AppColors.primaryColor),
                         ),
@@ -138,8 +134,8 @@ class HostelDetailPage extends StatelessWidget {
             // Message button
             ElevatedButton.icon(
               onPressed: () {},
-              icon: const Icon(Icons.message , color: Colors.white,),
-              label: const Text("Message",style: TextStyle(color: Colors.white),),
+              icon: const Icon(Icons.message, color: Colors.white),
+              label: const Text("Message", style: TextStyle(color: Colors.white)),
               style: ElevatedButton.styleFrom(
                 backgroundColor: AppColors.primaryColor,
                 minimumSize: const Size(double.infinity, 45),
@@ -165,20 +161,26 @@ class HostelDetailPage extends StatelessWidget {
 
             const SizedBox(height: 20),
 
-            // Feature cards (responsive with Wrap)
+            // Feature cards
             Wrap(
               spacing: 10,
               runSpacing: 10,
-              children: const [
+              children: [
                 SizedBox(
                   width: double.infinity,
-                  child: _FeatureCard(
-                    icon: Icons.bolt,
-                    title: "AI-Powered Recommendation",
-                    description: "Suggests hostels/rooms",
+                  child: GestureDetector(
+                    onTap: () => showDialog(
+                      context: context,
+                      builder: (_) => const RecommendationDialog(),
+                    ),
+                    child: const _FeatureCard(
+                      icon: Icons.bolt,
+                      title: "AI-Powered Recommendation",
+                      description: "Suggests hostels/rooms",
+                    ),
                   ),
                 ),
-                SizedBox(
+                const SizedBox(
                   width: double.infinity,
                   child: _FeatureCard(
                     icon: Icons.star,
@@ -186,7 +188,7 @@ class HostelDetailPage extends StatelessWidget {
                     description: "Rates cleanliness and condition",
                   ),
                 ),
-                SizedBox(
+                const SizedBox(
                   width: double.infinity,
                   child: _FeatureCard(
                     icon: Icons.analytics,
@@ -194,7 +196,7 @@ class HostelDetailPage extends StatelessWidget {
                     description: "Predicts suspicious listings",
                   ),
                 ),
-                SizedBox(
+                const SizedBox(
                   width: double.infinity,
                   child: _FeatureCard(
                     icon: Icons.attach_money,
@@ -210,7 +212,7 @@ class HostelDetailPage extends StatelessWidget {
             // Book Now button
             ElevatedButton(
               onPressed: () {},
-              child: const Text("Book Now", style: TextStyle(color: Colors.white),),
+              child: const Text("Book Now", style: TextStyle(color: Colors.white)),
               style: ElevatedButton.styleFrom(
                 backgroundColor: AppColors.primaryColor,
                 minimumSize: const Size(double.infinity, 48),
@@ -267,6 +269,70 @@ class _FeatureCard extends StatelessWidget {
           ],
         ),
       ),
+    );
+  }
+}
+
+class RecommendationDialog extends StatefulWidget {
+  const RecommendationDialog({super.key});
+
+  @override
+  State<RecommendationDialog> createState() => _RecommendationDialogState();
+}
+
+class _RecommendationDialogState extends State<RecommendationDialog> {
+  static const List<String> recommendations = [
+    "Check out GreenView Hostel – best for natural light and study ambiance.",
+    "Try Moonlight Rooms – verified cleanliness and high student ratings.",
+    "Budget-friendly alert: CozyStay offers shared rooms at low rent!",
+    "Looking for peace? SilentNest has strict no-noise policies.",
+    "Top pick: PrimeHostel near the library with free Wi-Fi and meals."
+  ];
+
+  String displayedText = '';
+  late String selectedRecommendation;
+  int _charIndex = 0;
+
+  @override
+  void initState() {
+    super.initState();
+    selectedRecommendation = (recommendations.toList()..shuffle()).first;
+    _startTypingAnimation();
+  }
+
+  void _startTypingAnimation() {
+    Future.delayed(const Duration(milliseconds: 50), _addNextChar);
+  }
+
+  void _addNextChar() {
+    if (_charIndex < selectedRecommendation.length) {
+      setState(() {
+        displayedText += selectedRecommendation[_charIndex];
+        _charIndex++;
+      });
+      Future.delayed(const Duration(milliseconds: 40), _addNextChar);
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return AlertDialog(
+      title: const Text("AI Recommendation"),
+      content: SizedBox(
+        height: 100,
+        child: SingleChildScrollView(
+          child: Text(
+            displayedText,
+            style: const TextStyle(fontSize: 14),
+          ),
+        ),
+      ),
+      actions: [
+        TextButton(
+          child: const Text("Close", style: TextStyle(color: AppColors.primaryColor)),
+          onPressed: () => Navigator.of(context).pop(),
+        )
+      ],
     );
   }
 }
